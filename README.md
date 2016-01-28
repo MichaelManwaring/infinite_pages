@@ -71,7 +71,7 @@ $("<%=j render(:partial => 'posts', :object => @posts) %>")
   .appendTo($(".infinite-table table"));
 
 // Update pagination link
-<% if @lessons.last_page? %>
+<% if @posts.last_page? %>
   $('.pagination').html("That's all, folks!");
 <% else %>
   $('.pagination')
@@ -81,7 +81,7 @@ $("<%=j render(:partial => 'posts', :object => @posts) %>")
 
 At this point, the pagination link at the bottom of your table should allow you
 to load the next page without refreshing. Finally, we trigger the next page load
-with the `infinitePages` plugin in `app/assets/javascripts/lessons.js.coffee`:
+with the `infinitePages` plugin in `app/assets/javascripts/posts.js.coffee`:
 
 ```coffee
 $ ->
@@ -94,4 +94,4 @@ $ ->
       $(this).button('There was an error, please try again')
 ```
 
-Voila! You should now have an infinitely long list of lessons.
+Voila! You should now have an infinitely long list of posts.
