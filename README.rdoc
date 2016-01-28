@@ -8,13 +8,13 @@ using Kaminari.
 
 Set up pagination in `lessons_controller.rb`:
 
-``ruby
-class LessonsController
+```ruby
+  class LessonsController
   def index
     @lessons = Lesson.order('lessons.name ASC').page(params[:page])
   end
 end
-``
+```
 
 Write the template for your list of lessons in `app/views/lessons/index.html.erb`:
 
