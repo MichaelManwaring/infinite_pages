@@ -1,4 +1,9 @@
 jQuery Infinite Pages
+
+This is my application of Jquery Infinite-pages gem which allows pagination of content. this installation and example is an altered version of the one on the github page for the gem.
+
+
+
 =====================
 Installation
 ------------
