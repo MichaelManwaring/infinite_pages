@@ -1,28 +1,78 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails/Kaminari Example
+----------------------
 
-Things you may want to cover:
+The following is an example of how to integrate this plugin into your Rails app
+using Kaminari.
 
-* Ruby version
+Set up pagination in `lessons_controller.rb`:
 
-* System dependencies
+```ruby
+class LessonsController
+  def index
+    @lessons = Lesson.order('lessons.name ASC').page(params[:page])
+  end
+end
+```
 
-* Configuration
+Write the template for your list of lessons in `app/views/lessons/index.html.erb`:
 
-* Database creation
+```erb
+<div class="infinite-table">
+  <table>
+    <tr>
+      <th>Lesson</th>
+      <th></th>
+    </tr>
+    <%= render :partial => 'lessons', :object => @lessons %>
+  </table>
+  <p class="pagination">
+    <%= link_to_next_page(@lessons, 'Next Page', :remote => true) %>
+  </p>
+</div>
+```
 
-* Database initialization
+...and `app/views/lessons/_lessons.html.erb`:
 
-* How to run the test suite
+```erb
+<% @lessons.each do |lesson| %>
+  <tr>
+    <td><%= lesson.name %> (<%= lesson.length.format %>)</td>
+    <td><%= link_to "watch", lesson_path(lesson) %></td>
+  </tr>
+<% end %>
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+Append new data to the table in `app/views/lessons/index.js.erb`:
 
-* Deployment instructions
+```javascript
+// Append new data
+$("<%=j render(:partial => 'lessons', :object => @lessons) %>")
+  .appendTo($(".infinite-table table"));
 
-* ...
+// Update pagination link
+<% if @lessons.last_page? %>
+  $('.pagination').html("That's all, folks!");
+<% else %>
+  $('.pagination')
+    .html("<%=j link_to_next_page(@lessons, 'Next Page', :remote => true) %>");
+<% end %>
+```
 
+At this point, the pagination link at the bottom of your table should allow you
+to load the next page without refreshing. Finally, we trigger the next page load
+with the `infinitePages` plugin in `app/assets/javascripts/lessons.js.coffee`:
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+```coffee
+$ ->
+  # Configure infinite table
+  $('.infinite-table').infinitePages
+    # debug: true
+    loading: ->
+      $(this).text('Loading next page...')
+    error: ->
+      $(this).button('There was an error, please try again')
+```
+
+Voila! You should now have an infinitely long list of lessons.
