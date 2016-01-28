@@ -35,7 +35,7 @@ class PostsController
 end
 ```
 
-Write the template for your list of lessons in `app/views/posts/index.html.erb`:
+Write the template for your list of posts in `app/views/posts/index.html.erb`:
 
 ```erb
 <div class="infinite-table">
@@ -44,7 +44,7 @@ Write the template for your list of lessons in `app/views/posts/index.html.erb`:
       <th>Post</th>
       <th></th>
     </tr>
-    <%= render :partial => 'posts', :object => @lessons %>
+    <%= render :partial => 'posts', :object => @posts %>
   </table>
   <p class="pagination">
     <%= link_to_next_page(@posts, 'Next Page', :remote => true) %>
