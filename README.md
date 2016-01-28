@@ -1,21 +1,12 @@
 jQuery Infinite Pages
 =====================
-
-[![Gem Version](https://badge.fury.io/rb/jquery-infinite-pages.svg)](http://badge.fury.io/rb/jquery-infinite-pages)
-
-A light-weight jQuery plugin for adding infinite scrolling to paginated HTML views
-that tastes great with [Rails](https://github.com/rails/rails) and
-[Kaminari](https://github.com/amatsuda/kaminari).
-
-This project was originally designed for Rails, but the core plugin is flexible
-enough to use anywhere.
-
 Installation
 ------------
 
-Add this line to your application's `Gemfile`:
+Add these line to your application's `Gemfile`:
 ```ruby
 gem 'jquery-infinite-pages'
+gem 'kaminari', '~> 0.16.3'
 ```
 
 And then execute:
@@ -23,52 +14,9 @@ And then execute:
 bundle install
 ```
 
-Add to your `application.js` file:
+Check to make sure the following has been added to your `application.js` file:
 ```javascript
 //= require jquery.infinite-pages
-```
-
-### Non-Rails
-
-Just copy the `jquery.infinite-pages.js.coffee` file from `app/assets/javascripts` to
-wherever you want it.
-
-Usage
------
-jQuery Infinite Pages binds to an element containing a `rel="next"` pagination link and
-watches for scroll events.
-
-When the link is close to the bottom of the screen, an async request to the next page
-is triggered. The server's response should then append the new page and update the
-pagination link.
-
-```coffeescript
-# Setup plugin and define optional event callbacks
-$('.infinite-table').infinitePages
- debug: true
- buffer: 200 # load new page when within 200px of nav link
- context: '.pane' # define the scrolling container (defaults to window)
- loading: ->
-   # jQuery callback on the nav element
-   $(this).text("Loading...")
- success: ->
-   # called after successful ajax call
- error: ->
-   # called after failed ajax call
-   $(this).text("Trouble! Please drink some coconut water and click again")
-```
-
-You can also manually control the firing of load events:
-
-```coffeescript
-# Force load of the next page
-$('.infinite-table').infinitePages('next')
-
-# Pause firing of events on scroll
-$('.infinite-table').infinitePages('pause')
-
-# Resume...
-$('.infinite-table').infinitePages('resume')
 ```
 
 Rails/Kaminari Example
@@ -77,49 +25,49 @@ Rails/Kaminari Example
 The following is an example of how to integrate this plugin into your Rails app
 using Kaminari.
 
-Set up pagination in `lessons_controller.rb`:
+Set up pagination in `posts_controller.rb`:
 
 ```ruby
-class LessonsController
+class PostsController
   def index
-    @lessons = Lesson.order('lessons.name ASC').page(params[:page])
+    @posts = post.order('posts.name ASC').page(params[:page])
   end
 end
 ```
 
-Write the template for your list of lessons in `app/views/lessons/index.html.erb`:
+Write the template for your list of lessons in `app/views/posts/index.html.erb`:
 
 ```erb
 <div class="infinite-table">
   <table>
     <tr>
-      <th>Lesson</th>
+      <th>Post</th>
       <th></th>
     </tr>
-    <%= render :partial => 'lessons', :object => @lessons %>
+    <%= render :partial => 'posts', :object => @lessons %>
   </table>
   <p class="pagination">
-    <%= link_to_next_page(@lessons, 'Next Page', :remote => true) %>
+    <%= link_to_next_page(@posts, 'Next Page', :remote => true) %>
   </p>
 </div>
 ```
 
-...and `app/views/lessons/_lessons.html.erb`:
+...and `app/views/posts/_posts.html.erb`:
 
 ```erb
-<% @lessons.each do |lesson| %>
+<% @posts.each do |post| %>
   <tr>
-    <td><%= lesson.name %> (<%= lesson.length.format %>)</td>
-    <td><%= link_to "watch", lesson_path(lesson) %></td>
+    <td><%= post.title %></td>
+    <td><%= post.content %></td>
   </tr>
 <% end %>
 ```
 
-Append new data to the table in `app/views/lessons/index.js.erb`:
+Append new data to the table in `app/views/posts/index.js.erb`:
 
 ```javascript
 // Append new data
-$("<%=j render(:partial => 'lessons', :object => @lessons) %>")
+$("<%=j render(:partial => 'posts', :object => @posts) %>")
   .appendTo($(".infinite-table table"));
 
 // Update pagination link
@@ -127,7 +75,7 @@ $("<%=j render(:partial => 'lessons', :object => @lessons) %>")
   $('.pagination').html("That's all, folks!");
 <% else %>
   $('.pagination')
-    .html("<%=j link_to_next_page(@lessons, 'Next Page', :remote => true) %>");
+    .html("<%=j link_to_next_page(@posts, 'Next Page', :remote => true) %>");
 <% end %>
 ```
 
